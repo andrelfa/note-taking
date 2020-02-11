@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import Note from './components/Note/Note'
 import AddButton from './components/AddButton'
 import NotesList from './components/NotesList'
@@ -9,7 +9,9 @@ const AppContainer = styled.div`
   ${tw`flex items-center justify-center flex-col`}
 `;
 
+
 const App = () => {
+
   return (
     <AppContainer>
       <Note />

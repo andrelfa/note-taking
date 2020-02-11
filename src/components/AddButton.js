@@ -4,11 +4,10 @@ import tw from 'tailwind.macro';
 import { AppContext } from '../context/AppContext';
 
 const Button = styled.div`
-  ${tw`mt-5 border-none overflow-hidden relative inline-flex uppercase items-center justify-center shadow-2xl`}
+  ${tw`mt-5 border-none overflow-hidden relative inline-flex uppercase items-center justify-center shadow-2xl cursor-pointer`}
   transition: all .45s ease-Out;
   height: 40px;
   width: 150px;
-  border: 4px solid #a0aec0;
   color: #BFC0C0;
   background: #c0a0a0;
 `;
@@ -38,10 +37,10 @@ const Text = styled.span`
 `;
 
 const AddButton = () => {
-  const { addNote } = useContext(AppContext);
+  const { addNote, currentNote } = useContext(AppContext);
 
   return (  
-    <Button>
+    <Button onClick={() => addNote(currentNote)}>
       <Circle />
       <Text>
         Add
