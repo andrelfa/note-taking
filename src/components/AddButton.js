@@ -4,7 +4,7 @@ import tw from 'tailwind.macro';
 import { AppContext } from '../context/AppContext';
 
 const Button = styled.div`
-  ${tw`mt-5 border-none overflow-hidden relative inline-flex uppercase items-center justify-center shadow-2xl cursor-pointer`}
+  ${tw`mt-5 mb-10 border-none overflow-hidden relative inline-flex uppercase items-center justify-center shadow-2xl cursor-pointer`}
   transition: all .45s ease-Out;
   height: 40px;
   width: 150px;

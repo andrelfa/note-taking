@@ -5,10 +5,10 @@ const AppContext = createContext();
 
 const AppContextProvider = ({ children }) => {
 
-  const [notes, setNotes] = useState(getObjectFromLocalStorage('notes'));
+  const validNotes = getObjectFromLocalStorage('notes').filter(c => !!c);
+  const [notes, setNotes] = useState(validNotes);
+  window.localStorage.setItem('notes', JSON.stringify(validNotes));
   const [currentNote, setCurrentNote] = useState();
-
-  console.log('notes notes list', getObjectFromLocalStorage('notes'));
 
   const addNote = note => {
     if (notes.includes(note)) return;
