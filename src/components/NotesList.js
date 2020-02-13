@@ -1,8 +1,9 @@
-import React, { useContext, useRef, createRef } from 'react';
+import React, { useContext, useRef, createRef, useState } from 'react';
 import { AppContext } from '../context/AppContext';
 import styled from 'styled-components';
 import tw from 'tailwind.macro';
 import { useTransition, animated } from 'react-spring';
+import marked from 'marked';
 
 const OuterContainer = styled.div`
   ${tw`flex items-center justify-between w-3/5 flex-wrap`}
@@ -60,14 +61,19 @@ const NoteInput = styled.div`
   &:focus {
     background: #6482a9;
   }
+
+  &> * {
+    margin: 0;
+  }
 `
 
 const NotesList = () => {
 
   const { notes, removeNote } = useContext(AppContext);
+  const [focused, setFocused] = useState();
   const elementsRef = useRef(notes.map(() => createRef()));
 
-  const transition = useTransition(notes, s => s, {
+  const transition = useTransition(notes, s => s.html, {
     from: { opacity: 0, transform: "translateX(-10px)" },
     enter: { opacity: 1, transform: "translateX(0)" },
     leave: { opacity: 0, transform: "translateX(10px)" }
@@ -75,19 +81,30 @@ const NotesList = () => {
 
   const changeNote = (index, event) => {
     let editedNotes = [...notes];
-    editedNotes[index] = event.target.textContent;
+    editedNotes[index].text = event.target.textContent;
+    editedNotes[index].html = marked(event.target.textContent);
     window.localStorage.setItem('notes', JSON.stringify([...editedNotes]));
   }
-
+  
   return (
     <OuterContainer>
       {transition.map(({item, props, key}, i) => {
+        console.log('item', item)
+
         return (
           item && (
-            <NoteContainer key={key} style={props}>
-              <NoteInput onInput={(event) => changeNote(i, event)} ref={elementsRef.current[i]} suppressContentEditableWarning={true} contentEditable={true}>
-                {item}
-              </NoteInput>
+            <NoteContainer key={i} style={props}>
+              <NoteInput onFocus={() => {setFocused(true); item.focused = true}} 
+                onBlur={() => {setFocused(false); item.focused = false}} 
+                onInput={(event) => changeNote(i, event)} 
+                ref={elementsRef.current[i]} 
+                suppressContentEditableWarning={true} 
+                contentEditable={true} 
+                dangerouslySetInnerHTML={{ __html: item.focused ? item.text : item.html }} 
+              />
+                {/* {item.focused ? item.text : item.html}
+                {item.focused ? 'verdadeiro' : 'falso'}
+              </NoteInput> */}
               <DeleteBox onClick={() => removeNote(i)}>
                 <DeleteX>
                   X

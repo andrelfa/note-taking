@@ -1,5 +1,6 @@
 import React, { createContext, useState } from 'react';
 import { getObjectFromLocalStorage } from '../utils/utils';
+import marked from 'marked';
 
 const AppContext = createContext();
 
@@ -11,9 +12,14 @@ const AppContextProvider = ({ children }) => {
   const [currentNote, setCurrentNote] = useState();
 
   const addNote = note => {
-    if (notes.includes(note)) return;
-    setNotes([...notes, note])
-    window.localStorage.setItem('notes', JSON.stringify([...notes, note]));
+    if (!note) return;
+    const noteObj = {
+      text: note,
+      html: marked(note),
+      focused: false
+    };
+    setNotes([...notes, noteObj])
+    window.localStorage.setItem('notes', JSON.stringify([...notes, noteObj]));
   };
 
   const removeNote = index => {
