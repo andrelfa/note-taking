@@ -1,22 +1,21 @@
 import React, { createContext, useState } from 'react';
 import { getObjectFromLocalStorage } from '../utils/utils';
 import marked from 'marked';
+import uuidv4 from 'uuid/v4';
 
 const AppContext = createContext();
 
 const AppContextProvider = ({ children }) => {
 
-  const validNotes = getObjectFromLocalStorage('notes').filter(c => !!c);
-  const [notes, setNotes] = useState(validNotes);
-  window.localStorage.setItem('notes', JSON.stringify(validNotes));
+  const [notes, setNotes] = useState(getObjectFromLocalStorage('notes'));
   const [currentNote, setCurrentNote] = useState();
 
   const addNote = note => {
-    if (!note) return;
+    if (notes.includes(note) || !note) return;
     const noteObj = {
       text: note,
       html: marked(note),
-      focused: false
+      id: uuidv4()
     };
     setNotes([...notes, noteObj])
     window.localStorage.setItem('notes', JSON.stringify([...notes, noteObj]));
