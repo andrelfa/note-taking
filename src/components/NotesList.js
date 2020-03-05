@@ -109,7 +109,7 @@ const NotesList = () => {
           )
           )
         })}
-      <EditModal noteToEdit={noteToEdit} />
+      <EditModal noteToEdit={noteToEdit} closeModal={() => setNoteToEdit(null)} />
     </OuterContainer>
   );
 }
