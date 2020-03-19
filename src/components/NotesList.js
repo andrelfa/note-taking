@@ -28,7 +28,7 @@ const DeleteBox = styled.div`
   font-style: normal;
   top: 0;
   right: 0;
-  width: 30px;
+  width: 55px;
 `
 
 const DeleteX = styled.span`
@@ -49,7 +49,7 @@ const EditBox = styled.div`
   font-stylme pae: normal;
   top: 0;
   right: 30px;
-  width: 30px;
+  width: 55px;
 
   svg {
     ${tw`w-4`}
@@ -76,6 +76,7 @@ const NoteInput = styled.div`
 const NotesList = () => {
 
   const { notes, removeNote } = useContext(AppContext);
+  const [showModal, setShowModal] = useState(false);
   const elementsRef = useRef(notes.map(() => createRef()));
   const [noteToEdit, setNoteToEdit] = useState(null);
 
@@ -83,6 +84,13 @@ const NotesList = () => {
     from: { opacity: 0, transform: "translateX(-10px)" },
     enter: { opacity: 1, transform: "translateX(0)" },
     leave: { opacity: 0, transform: "translateX(10px)" }
+  });
+
+  const modalTransition = useTransition(showModal, null, {
+    from: { opacity: 0 },
+    enter: { opacity: 1 },
+    leave: { opacity: 0 },
+    config: { duration: 200 }
   });
 
   const changeNote = (id, text) => {
@@ -112,14 +120,22 @@ const NotesList = () => {
                   <ReactSVG src="/icons/trash.svg" />
                 </DeleteX>
               </DeleteBox>
-              <EditBox onClick={() => setNoteToEdit(item)}>
+              <EditBox onClick={() => {setNoteToEdit(item); setShowModal(true)}}>
                 <ReactSVG src="/icons/edit-pencil.svg" />
               </EditBox>
             </NoteContainer>
           )
           )
         })}
-      <EditModal noteToEdit={noteToEdit} onNoteChange={(id, text) => changeNote(id, text)} closeModal={() => setNoteToEdit(null)} />
+        {modalTransition.map(({item, props, key}, i) => {
+          return (
+            item && (
+              <animated.div style={props} key={key}>
+                <EditModal noteToEdit={noteToEdit} onNoteChange={(id, text) => changeNote(id, text)} closeModal={() => {setShowModal(false)}} />                
+              </animated.div>
+            )
+          )
+        })}        
     </OuterContainer>
   );
 }
