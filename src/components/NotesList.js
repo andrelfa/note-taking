@@ -1,9 +1,11 @@
 import React, { useContext, useRef, createRef, useState } from 'react';
+import marked from 'marked';
 import { AppContext } from '../context/AppContext';
 import styled from 'styled-components';
 import tw from 'tailwind.macro';
 import { useTransition, animated } from 'react-spring';
 import EditModal from './EditModal/EditModal';
+import { ReactSVG } from 'react-svg'
 
 const OuterContainer = styled.div`
   ${tw`flex items-center justify-between w-3/5 flex-wrap`}
@@ -14,7 +16,7 @@ const NoteContainer = styled(animated.div)`
   background: #a0aec0;
   color: #fff;
   padding-right: 55px;
-  width: 44%;
+  width: 100%;
 `
 
 const DeleteBox = styled.div`
@@ -26,12 +28,16 @@ const DeleteBox = styled.div`
   font-style: normal;
   top: 0;
   right: 0;
-  background: #f56e6e;
   width: 30px;
 `
 
 const DeleteX = styled.span`
   font-size: 12px;
+
+  svg {
+    ${tw`w-4`}
+    fill: #fff;
+  }
 `
 
 const EditBox = styled.div`
@@ -43,8 +49,12 @@ const EditBox = styled.div`
   font-stylme pae: normal;
   top: 0;
   right: 30px;
-  background: #dfe081;
   width: 30px;
+
+  svg {
+    ${tw`w-4`}
+    fill: #fff;
+  }
 `
 
 const EditText = styled.span`
@@ -75,41 +85,41 @@ const NotesList = () => {
     leave: { opacity: 0, transform: "translateX(10px)" }
   });
 
-  const changeNote = (index, event) => {
+  const changeNote = (id, text) => {
+    console.log('id', id);
+    console.log('event', text);
     let editedNotes = [...notes];
-    editedNotes[index] = event.target.textContent;
+    let index = editedNotes.findIndex(note => note.id === id);
+    editedNotes[index].text = text; 
+    editedNotes[index].html = marked(text); 
     window.localStorage.setItem('notes', JSON.stringify([...editedNotes]));
   }
 
   return (
     <OuterContainer>
       {transition.map(({item, props, key}, i) => {
-        
         return (
           item && (
             <NoteContainer key={item.id} style={props}>
               <NoteInput 
-                onInput={(event) => changeNote(i, event)} 
+                // onInput={(event) => changeNote(i, event)} 
                 ref={elementsRef.current[i]} 
                 suppressContentEditableWarning={true} 
-              >
-                {item.text}
-              </NoteInput>
+                dangerouslySetInnerHTML={{ __html: item.html }}
+              />
               <DeleteBox onClick={() => removeNote(i)}>
                 <DeleteX>
-                  X
+                  <ReactSVG src="/icons/trash.svg" />
                 </DeleteX>
               </DeleteBox>
-              <EditBox onClick={() => setNoteToEdit({ text: item.text, html: item.html })}>
-                <EditText>
-                Edit
-                </EditText>
+              <EditBox onClick={() => setNoteToEdit(item)}>
+                <ReactSVG src="/icons/edit-pencil.svg" />
               </EditBox>
             </NoteContainer>
           )
           )
         })}
-      <EditModal noteToEdit={noteToEdit} closeModal={() => setNoteToEdit(null)} />
+      <EditModal noteToEdit={noteToEdit} onNoteChange={(id, text) => changeNote(id, text)} closeModal={() => setNoteToEdit(null)} />
     </OuterContainer>
   );
 }

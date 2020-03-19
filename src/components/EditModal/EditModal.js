@@ -19,7 +19,7 @@ const NoteTextArea = styled.textarea`
   height: 85%;
 `;
 
-const EditModal = ({ noteToEdit, closeModal }) => {
+const EditModal = ({ noteToEdit, closeModal, onNoteChange }) => {
 
   console.log('notetoedit', noteToEdit)
 
@@ -27,7 +27,7 @@ const EditModal = ({ noteToEdit, closeModal }) => {
     noteToEdit ? (
       <OuterContainer onClick={closeModal}>
         <InnerContainer onClick={(e) => e.stopPropagation()}>
-          <NoteTextArea defaultValue={noteToEdit.text} />
+          <NoteTextArea defaultValue={noteToEdit.text} onChange={event => onNoteChange(noteToEdit.id, event.target.value)} />
         </InnerContainer>
       </OuterContainer>
     ) : null
